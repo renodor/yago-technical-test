@@ -1,0 +1,18 @@
+<h1>What type of insurance do you need?</h1>
+
+<div>
+  <%= simple_form_for [@lead, @quote] do |f| %>
+    <%= f.input :annual_revenue, label: false, placeholder: 'Annual revenue*' %>
+    <%= f.input :enterprise_number, label: false, placeholder: 'Enterprise number*' %>
+    <%= f.input :legal_name, label: false, placeholder: 'Legal name*' %>
+    <%= f.input :natural_person, label: 'Are you a natural person?' %>
+    <%= f.input :nacebel_codes, as: :check_boxes, collection: Quote::MEDICAL_NACEBEL_CODES, include_hidden: false %>
+    <% Quote::COVERS.each do |cover| %>
+      <%= label_tag cover %>
+      <%= check_box_tag 'covers[]', cover %>
+    <% end %>
+    <%= f.input :coverage_ceiling_formula, as: :select, collection: Quote.coverage_ceiling_formulas.keys, label: false, placeholder: 'Coverage Type' %>
+    <%= f.input :deducible_formula, as: :select, collection: Quote.coverage_ceiling_formulas.keys, label: false, placeholder: 'Deducible Type' %>
+    <%= f.button :submit %>
+  <% end %>
+</div>

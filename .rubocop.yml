@@ -15,7 +15,7 @@ Style/Documentation:
   Enabled: false
 
 Layout/LineLength:
-  Max: 300
+  Max: 150
 
 Style/ClassAndModuleChildren:
   Enabled: false
@@ -37,3 +37,6 @@ Metrics/CyclomaticComplexity:
 
 Metrics/PerceivedComplexity:
   Max: 15
+
+Naming/VariableNumber:
+  Enabled: false

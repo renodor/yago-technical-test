@@ -54,6 +54,9 @@ gem 'simple_form'
 # CSS framework
 gem 'tailwindcss-rails', '~> 2.0'
 
+# HTTP client
+gem 'faraday'
+
 group :development, :test do
   # Debugging
   gem 'pry-byebug'

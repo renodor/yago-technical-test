@@ -1,0 +1,15 @@
+<h1>Let's start to get to know you better</h1>
+
+<div>
+  <%= simple_form_for @lead do |f| %>
+    <%= f.input :first_name, label: false, placeholder: 'First name' %>
+    <%= f.input :last_name, label: false, placeholder: 'Last name' %>
+    <%= f.input :email, label: false, placeholder: 'Email*' %>
+    <%= f.input :phone_number, label: false, placeholder: 'Phone number*' %>
+    <%= f.input :address, label: false, placeholder: 'Address' %>
+    <%= f.input :address_2, label: false, placeholder: 'Address 2' %>
+    <%= f.input :zip_code, label: false, placeholder: 'Zip code' %>
+    <%= f.input :city, label: false, placeholder: 'City' %>
+    <%= f.button :submit %>
+  <% end %>
+</div>

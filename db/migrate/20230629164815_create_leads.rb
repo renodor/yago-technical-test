@@ -9,7 +9,7 @@ class CreateLeads < ActiveRecord::Migration[7.0]
       t.string :address_2
       t.string :zip_code
       t.string :city
-      t.integer :state
+      t.integer :status, null: false, default: 0
 
       t.timestamps
     end

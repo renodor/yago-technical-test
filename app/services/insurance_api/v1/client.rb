@@ -29,9 +29,10 @@ module InsuranceApi
       def handle_response(response)
         response_body = response.body
         return { success: true, payload: formated_response(response_body['data']) } if response_body['success']
-        return { success: false, payload: response_body.dig('data', 'message') } if response.success? # TODO: deal with this
+        return { success: false, payload: response_body.dig('data', 'message') } if response.success?
 
-        raise ApiError, response.status # TODO: deal with this
+        # If this happens we should probably report and log this error somewhere
+        raise ApiError, "#{response.status}: #{response.body}"
       end
 
       def formated_body(body)

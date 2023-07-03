@@ -50,13 +50,13 @@ class Lead < ApplicationRecord
   private
 
   def nacebel_codes_length
-    errors.add(:nacebel_codes, 'should all be 5 characters') unless nacebel_codes.all? { |nacebel_code| nacebel_code.length == 5 }
+    errors.add(:nacebel_codes, 'should all be 5 characters') unless nacebel_codes&.all? { |nacebel_code| nacebel_code.length == 5 }
   end
 
   def set_activity
     # This looks weird right now because we only have one type of activity,
     # but the purpose of this callback is to set the lead activity depending on its NACEBEL-CODES,
     # in order to later on be able to recommend different types of covers and deductible and coverage ceiling formulas
-    self.activity = :medical if nacebel_codes.intersect?(MEDICAL_NACEBEL_CODES)
+    self.activity = :medical if nacebel_codes&.intersect?(MEDICAL_NACEBEL_CODES)
   end
 end

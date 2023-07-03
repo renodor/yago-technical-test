@@ -40,7 +40,9 @@ module InsuranceApi
           enterpriseNumber: body[:enterprise_number],
           legalName: body[:legal_name],
           naturalPerson: ActiveModel::Type::Boolean.new.cast(body[:natural_person]),
-          nacebelCodes: body[:nacebel_codes]
+          nacebelCodes: body[:nacebel_codes],
+          coverageCeilingFormula: body[:coverage_ceiling_formula],
+          deductibleFormula: body[:deductible_formula]
         }
       end
 

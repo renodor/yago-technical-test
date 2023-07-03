@@ -25,10 +25,14 @@ class Lead < ApplicationRecord
     medical: 0
   }
 
-  MEDICAL_NACEBEL_CODES = {
-    'general practice doctor' => '86210',
-    'specialist doctor' => '86220',
-    'dentist' => '86230'
+  # Used to define Lead activity. We are currently dealing with 1 activity (medical) so a simple collection is enough,
+  # but this would need more complexe logic, with more NACEBEL-CODES and more activities
+  MEDICAL_NACEBEL_CODES = %w[86210 86220 86230].freeze
+
+  PROFESSION_BY_NACEBEL_CODE = {
+    '86210' => 'General practice doctor',
+    '86220' => 'Specialist doctor',
+    '86230' => 'Dentist'
   }.freeze
 
   def recommended_covers
@@ -39,7 +43,7 @@ class Lead < ApplicationRecord
     Quote::DEDUCTIBLE_FORMULA_BY_ACTIVITY[activity.to_sym]
   end
 
-  def recommended_coverage_ceiling
+  def recommended_coverage_ceiling_formula
     Quote::COVERAGE_CEILING_FORMULA_BY_ACTIVITY[activity.to_sym]
   end
 
@@ -52,7 +56,7 @@ class Lead < ApplicationRecord
   def set_activity
     # This looks weird right now because we only have one type of activity,
     # but the purpose of this callback is to set the lead activity depending on its NACEBEL-CODES,
-    # in order to later on be able to recommend different types of covers and deducible and coverage ceiling formulas
-    self.activity = :medical if nacebel_codes.intersect?(MEDICAL_NACEBEL_CODES.values)
+    # in order to later on be able to recommend different types of covers and deductible and coverage ceiling formulas
+    self.activity = :medical if nacebel_codes.intersect?(MEDICAL_NACEBEL_CODES)
   end
 end

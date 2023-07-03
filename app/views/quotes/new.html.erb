@@ -1,20 +1,45 @@
-<h1>What type of insurance do you need?</h1>
-
 <div>
-  <%= simple_form_for [@lead, @quote] do |f| %>
-    <%= f.input :annual_revenue, label: false, placeholder: 'Annual revenue*' %>
-    <%= f.input :enterprise_number, label: false, placeholder: 'Enterprise number*' %>
-    <%= f.input :legal_name, label: false, placeholder: 'Legal name*' %>
-    <%= f.input :natural_person, label: 'Are you a natural person?' %>
-    <p>Recommended covers for you are: <%= @lead.recommended_covers.map(&:humanize).join(', ') %></p>
-    <% Quote::AVAILABLE_COVERS.each do |cover| %>
-      <%= label_tag cover %>
-      <%= check_box_tag 'covers[]', cover %>
+  <h1 class="text-lg font-bold text-center">What type of insurance do you need?</h1>
+
+  <div class="mt-5">
+    <%= simple_form_for [@lead, @quote] do |f| %>
+      <%= f.input :annual_revenue, label: false, placeholder: 'Annual revenue*', input_html: { class: 'm-1' } %>
+      <%= f.input :enterprise_number, label: false, placeholder: 'Enterprise number*', input_html: { class: 'm-1' } %>
+      <%= f.input :legal_name, label: false, placeholder: 'Legal name*', input_html: { class: 'm-1' } %>
+      <%= f.input :natural_person, label: 'I am a natural person', input_html: { class: 'mr-2' } %>
+      <div>
+        <h2 class="mt-3 font-semibold">Choose your covers:</h2>
+        <p class="italic">
+          Recommended covers for you are: <span class="font-semibold"><%= @lead.recommended_covers.map(&:humanize).join(', ') %></span>
+        </p>
+        <% Quote::AVAILABLE_COVERS.each do |cover| %>
+          <div>
+            <%= check_box_tag 'covers[]', cover, @lead.recommended_covers.include?(cover), class: 'mr-2' %>
+            <%= label_tag cover %>
+          </div>
+        <% end %>
+      </div>
+      <div>
+        <h2 class="mt-3 font-semibold">Choose your coverage ceiling formula</h2>
+        <p class="italic">
+          Recommended coverage ceiling for you is: <span class="font-semibold"><%= @lead.recommended_coverage_ceiling_formula.capitalize %></span>
+        </p>
+        <%=
+          select_tag 'quote_formulas[coverage_ceiling_formula]',
+          options_for_select({ Small: :small, Medium: :medium,  Large: :large }, @lead.recommended_coverage_ceiling_formula)
+        %>
+      </div>
+      <div>
+        <h2 class="mt-3 font-semibold">Choose your deductible formula</h2>
+        <p class="italic">
+          Recommended deductible formula for you is: <span class="font-semibold"><%= @lead.recommended_deductible_formula.capitalize %></span>
+        </p>
+        <%=
+          select_tag 'quote_formulas[deductible_formula]',
+          options_for_select({ Small: :small, Medium: :medium,  Large: :large })
+        %>
+      </div>
+      <%= f.button :submit, class: 'w-full mt-3 border border-black p-2 bg-slate-200 cursor-pointer' %>
     <% end %>
-    <p>Recommended coverage ceiling formula for you is: <%= @lead.recommended_coverage_ceiling.capitalize %></p>
-    <%= select_tag 'coverage_ceiling_formula', options_for_select(%w[small medium large]) %>
-    <p>Recommended deductible formula for you is: <%= @lead.recommended_coverage_ceiling.capitalize %></p>
-    <%= select_tag 'deductible_formula', options_for_select(%w[small medium large]) %>
-    <%= f.button :submit %>
-  <% end %>
+  </div>
 </div>

@@ -1,6 +1,8 @@
 # frozen_string_literal:true
 
 class QuotesController < ApplicationController
+  before_action :set_lead, only: %i[new create]
+
   rescue_from InsuranceApi::V1::Client::ApiError, with: :api_error
 
   def show
@@ -8,12 +10,10 @@ class QuotesController < ApplicationController
   end
 
   def new
-    @lead = Lead.find(params[:lead_id])
     @quote = Quote.new
   end
 
   def create
-    @lead = Lead.find(params[:lead_id])
     @quote = @lead.quotes.new(quote_params)
 
     body = quote_params.merge(quote_formulas_params).merge(@lead.attributes.slice('nacebel_codes'))
@@ -35,12 +35,17 @@ class QuotesController < ApplicationController
     end
   end
 
+  # Would probably need a better error handling, but good enough for now :)
   def api_error
     flash.alert = 'Something went wrong please try again.'
     render :new, status: :unprocessable_entity
   end
 
   private
+
+  def set_lead
+    @lead = Lead.find(params[:lead_id])
+  end
 
   def quote_params
     params.require(:quote).permit(:annual_revenue, :enterprise_number, :legal_name, :person_type)

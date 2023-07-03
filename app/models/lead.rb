@@ -25,10 +25,11 @@ class Lead < ApplicationRecord
     medical: 0
   }
 
-  # Used to define Lead activity. We are currently dealing with 1 activity (medical) so a simple collection is enough,
+  # Used to define Lead activity. We are currently dealing with 1 activity (medical) so a simple array is enough,
   # but this would need more complexe logic, with more NACE-BEL codes and more activities
   MEDICAL_NACEBEL_CODES = %w[86210 86220 86230].freeze
 
+  # Currently the only NACE-BEL codes we support
   PROFESSION_BY_NACEBEL_CODE = {
     '86210' => 'General practice doctor',
     '86220' => 'Specialist doctor',
@@ -56,7 +57,7 @@ class Lead < ApplicationRecord
   def set_activity
     # This looks weird right now because we only have one type of activity,
     # but the purpose of this callback is to set the lead activity depending on its NACE-BEL codes,
-    # in order to later on be able to recommend different types of covers and deductible and coverage ceiling formulas
+    # in order to later be able to recommend different types of covers and deductible and coverage ceiling formulas
     self.activity = :medical if nacebel_codes&.intersect?(MEDICAL_NACEBEL_CODES)
   end
 end

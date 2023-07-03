@@ -2,11 +2,11 @@
 
 module InsuranceApi
   module V1
-    class ApiError < StandardError; end
-
     class Client
       BASE_URL = 'https://staging-gtw.seraphin.be/quotes'
       API_KEY  = Rails.application.credentials.insurance_api_key
+
+      class ApiError < StandardError; end
 
       def initialize
         @connection = Faraday.new(url: BASE_URL, headers: { 'X-Api-Key' => API_KEY }) do |conn|

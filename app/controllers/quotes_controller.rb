@@ -1,6 +1,8 @@
 # frozen_string_literal:true
 
 class QuotesController < ApplicationController
+  rescue_from InsuranceApi::V1::Client::ApiError, with: :api_error
+
   def show
     @quote = Quote.find(params[:id])
   end
@@ -19,7 +21,10 @@ class QuotesController < ApplicationController
 
     if response[:success]
       payload = response[:payload]
-      payload[:covers].slice!(*params[:covers].map(&:to_sym))
+      # Only add to the quote the covers choosen by user.
+      # If no covers where choosen, add all covers to the quote.
+      # (We should probably improve UI to prevent user from submiting a quote form without any cover)
+      payload[:covers].slice!(*params[:covers]&.map(&:to_sym)) if params[:covers].present?
 
       @quote.update(payload)
       @lead.quoted!
@@ -28,6 +33,11 @@ class QuotesController < ApplicationController
       @quote.valid? # Needed to generate @quote.errors in order to display errors in the form
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def api_error
+    flash.alert = 'Something went wrong please try again.'
+    render :new, status: :unprocessable_entity
   end
 
   private

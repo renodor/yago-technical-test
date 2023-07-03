@@ -10,5 +10,9 @@ Rails.application.routes.draw do
     resources :quotes, only: %i[new create]
   end
 
-  resources :quotes, only: :show
+  resources :quotes, only: :show do
+    collection do
+      get :api_error
+    end
+  end
 end

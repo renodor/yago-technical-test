@@ -7,7 +7,7 @@
       <%= f.input :enterprise_number, label: false, placeholder: 'Enterprise number*', input_html: { class: 'm-1' } %>
       <%= f.input :legal_name, label: false, placeholder: 'Legal name', input_html: { class: 'm-1' } %>
       <% Quote.person_types.keys.each do |person_type| %>
-        <%= f.radio_button :person_type, person_type %>
+        <%= f.radio_button :person_type, person_type, { checked: person_type == 'natural_person' } %>
         <%= f.label "person_type_#{person_type}", person_type.humanize %>
       <% end %>
       <div>
@@ -17,7 +17,7 @@
         </p>
         <% Quote::AVAILABLE_COVERS.each do |cover| %>
           <div>
-            <%= check_box_tag 'covers[]', cover, @lead.recommended_covers.include?(cover), class: 'mr-2' %>
+            <%= check_box_tag 'covers[]', cover, @lead.recommended_covers.include?(cover), class: 'mr-2', id: cover %>
             <%= label_tag cover %>
           </div>
         <% end %>

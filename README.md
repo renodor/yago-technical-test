@@ -16,7 +16,6 @@
 - `rails db:create` to create the Databse
 - `rails db:migrate` to run migrations
 - `bin/dev` to launch dev server on `localhost:3000`
-
 - `bundle exec rspec` to run the specs
 
 ## App Structure
@@ -44,4 +43,7 @@ The current version of the App has 3 pages with the following user journey:
 1. Home page: A form to get lead contact informations. With a CTA to go to quote form.
 2. Quote form: A form to get quote information, and advice user on the best options regarding his/her profile. With a CTA to create quote.
 3. Quote page: displays newly created RC quote.
+
+### About Specs
+We currently only have model specs (to test `Lead` and `Quote` models), and service spec (to test `InsuranceApi::V1::Client`). Going further we would need to create integration specs to test the user journey into the different pages.
 

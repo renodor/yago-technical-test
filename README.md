@@ -22,25 +22,26 @@
 ## App Structure
 ### Models
 #### Lead
-- Store potential customers contact information
+- Stores potential customers contact informations
 - Leads are meant to be re-contacted by the commercial team in order be converted to customers
-- Every lead have at least an `email` a `phone_number` and some NACE-BEL codes
-- Every lead also have a `status` (`initial`, `quoted`, `contacted`, `customer`, `closed`) in order to follow along its commercial journey
-- Lead can have some associated `quotes`
+- Every `lead` has at least an `email` a `phone_number` and some `nacebel_codes` (NACE-BEL codes)
+- Every `lead` also has a `status` (`initial`, `quoted`, `contacted`, `customer`, `closed`) in order to follow along its commercial journey
+- `lead` can have some associated quotes
 
 #### Quote
-- Store insurance quotes requested by our leads
+- Stores insurance quotes requested by leads
 - Every `quote` belongs to a specific `lead`
-- To create a `quote` we get some of our lead information (NACE-BEL codes, `annual_revenue`, `enterprise_number`, `coverage_ceiling_formula`, `deductible_formula`), and then call the Insurance API (`https://staging-gtw.seraphin.be/quotes/`) to get the `coverage_ceiling`, `deductible` and `covers` prices
+- To create a `quote` we get some user information (`nacebel_codes`, `annual_revenue`, `enterprise_number`, `legal_name`, `person_type`, `coverage_ceiling_formula`, `deductible_formula`), and then call the Insurance API to get the `coverage_ceiling`, `deductible` and `covers` prices
 
 ### Services
 #### Insurance Api
 - The `InsuranceApi::V1::Client` service is used to call the Insurance Api: `https://staging-gtw.seraphin.be/quotes/`
-- Currently only used to call the `professional-liability` endpoint.
+- Currently only used to call the `professional-liability` endpoint
+- (Please contact an administrator to get a valid Api key for authentication)
 
 ### Pages
-The current version of the App has 3 pages. The user flow is the following:
-1. Home page: A form to get lead contact informations
-2. Quote form: A form to get quote information, and advice user on the best options regarding his/her profile
-3. Quote page: displays newly created RC quote
+The current version of the App has 3 pages with the following user journey:
+1. Home page: A form to get lead contact informations. With a CTA to go to quote form.
+2. Quote form: A form to get quote information, and advice user on the best options regarding his/her profile. With a CTA to create quote.
+3. Quote page: displays newly created RC quote.
 

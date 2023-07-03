@@ -5,7 +5,7 @@ class Lead < ApplicationRecord
 
   validates :email, :phone_number, :nacebel_codes, :status, :activity, presence: true
   validates :email, format: { with: /.+@.+\..+/ }
-  validate :nacebel_codes, :nacebel_codes_length
+  validate :nacebel_codes, :validate_nacebel_codes_length
 
   before_validation :set_activity
 
@@ -49,7 +49,7 @@ class Lead < ApplicationRecord
 
   private
 
-  def nacebel_codes_length
+  def validate_nacebel_codes_length
     errors.add(:nacebel_codes, 'should all be 5 characters') unless nacebel_codes&.all? { |nacebel_code| nacebel_code.length == 5 }
   end
 

@@ -22,8 +22,8 @@ RSpec.describe Lead do
     lead2 = build(:lead, nacebel_codes: %w[12345 1234])
 
     expect(lead.valid?).to be true
-    expect(lead2.valid?).to be false
 
+    expect(lead2.valid?).to be false
     expect(lead2.errors.full_messages).to eq(['Nacebel codes should all be 5 characters'])
   end
 

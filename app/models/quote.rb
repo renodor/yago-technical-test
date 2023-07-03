@@ -3,11 +3,15 @@
 class Quote < ApplicationRecord
   belongs_to :lead
 
-  validates :annual_revenue, :enterprise_number, :deductible, :coverage_ceiling, :covers, presence: true
+  validates :annual_revenue, :enterprise_number, :person_type, :deductible, :coverage_ceiling, :covers, presence: true
   validates :enterprise_number, length: { is: 10 }
 
+  enum person_type: {
+    natural_person: 0,
+    legal_person: 1
+  }
+
   # TODO: validate covers.keys include AVAILABLE_COVERS
-  # TODO: maybe change natural_person boolean to an enum to easily display the 2 options
 
   AVAILABLE_COVERS = %w[after_delivery public_liability legal_expenses professional_indemnity entrusted_objects].freeze
 

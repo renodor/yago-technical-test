@@ -4,7 +4,7 @@ class CreateQuotes < ActiveRecord::Migration[7.0]
       t.integer :annual_revenue, null: false
       t.string :enterprise_number, null: false
       t.string :legal_name
-      t.boolean :natural_person, null: false, default: true
+      t.integer :person_type, null: false
       t.integer :coverage_ceiling
       t.integer :deductible
       t.jsonb :covers, null: :false, default: {}

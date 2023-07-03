@@ -43,7 +43,7 @@ class QuotesController < ApplicationController
   private
 
   def quote_params
-    params.require(:quote).permit(:annual_revenue, :enterprise_number, :legal_name, :natural_person)
+    params.require(:quote).permit(:annual_revenue, :enterprise_number, :legal_name, :person_type)
   end
 
   def quote_formulas_params

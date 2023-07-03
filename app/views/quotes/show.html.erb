@@ -6,7 +6,7 @@
   </p>
   <p><span class="font-semibold">Enterprise number:</span> <%= @quote.enterprise_number %></p>
   <p><span class="font-semibold">Legal name:</span> <%= @quote.legal_name %></p>
-  <p><span class="font-semibold">Natural person:</span> <%= @quote.natural_person %></p>
+  <p><span class="font-semibold">Person type:</span> <%= @quote.person_type.humanize %></p>
   <br />
   <p>
     <span class="font-semibold">Coverage ceiling:</span> <%= number_to_currency(@quote.coverage_ceiling, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>

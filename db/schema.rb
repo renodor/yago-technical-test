@@ -34,7 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_29_165809) do
     t.integer "annual_revenue", null: false
     t.string "enterprise_number", null: false
     t.string "legal_name"
-    t.boolean "natural_person", default: true, null: false
+    t.integer "person_type", null: false
     t.integer "coverage_ceiling"
     t.integer "deductible"
     t.jsonb "covers", default: {}

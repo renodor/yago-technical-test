@@ -6,7 +6,10 @@
       <%= f.input :annual_revenue, label: false, placeholder: 'Annual revenue*', input_html: { class: 'm-1' } %>
       <%= f.input :enterprise_number, label: false, placeholder: 'Enterprise number*', input_html: { class: 'm-1' } %>
       <%= f.input :legal_name, label: false, placeholder: 'Legal name', input_html: { class: 'm-1' } %>
-      <%= f.input :natural_person, label: 'I am a natural person', input_html: { class: 'mr-2' } %>
+      <% Quote.person_types.keys.each do |person_type| %>
+        <%= f.radio_button :person_type, person_type %>
+        <%= f.label "person_type_#{person_type}", person_type.humanize %>
+      <% end %>
       <div>
         <h2 class="mt-3 font-semibold">Choose your covers:</h2>
         <p class="italic">

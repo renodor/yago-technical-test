@@ -10,6 +10,7 @@
     <%= f.input :address_2, label: false, placeholder: 'Address 2' %>
     <%= f.input :zip_code, label: false, placeholder: 'Zip code' %>
     <%= f.input :city, label: false, placeholder: 'City' %>
+    <%= f.input :nacebel_codes, as: :check_boxes, collection: Lead::MEDICAL_NACEBEL_CODES, include_hidden: false %>
     <%= f.button :submit %>
   <% end %>
 </div>

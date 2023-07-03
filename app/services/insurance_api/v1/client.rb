@@ -2,6 +2,8 @@
 
 module InsuranceApi
   module V1
+    class ApiError < StandardError; end
+
     class Client
       BASE_URL = 'https://staging-gtw.seraphin.be/quotes'
       API_KEY  = Rails.application.credentials.insurance_api_key
@@ -15,7 +17,7 @@ module InsuranceApi
       end
 
       def professional_liability(body:)
-        post_request(endpoint: 'professional-liability', body: body.transform_keys { |key| key.camelize(:lower) })
+        post_request(endpoint: 'professional-liability', body: formated_body(body))
       end
 
       private
@@ -26,24 +28,34 @@ module InsuranceApi
 
       def handle_response(response)
         response_body = response.body
-        return response_body['data'].deep_transform_keys(&:underscore) if response.success? && response_body['success']
+        return { success: true, payload: formated_response(response_body['data']) } if response_body['success']
+        return { success: false, payload: response_body.dig('data', 'message') } if response.success? # TODO: deal with this
 
-        response_status = response.status
-        raise Error.new(
-          "#{response_status} Error",
-          response_status,
-          response_body.presence || {}
-        )
+        raise ApiError, response.status # TODO: deal with this
       end
 
-      class Error < StandardError
-        attr_reader :status, :body
+      def formated_body(body)
+        {
+          annualRevenue: body[:annual_revenue].to_i,
+          enterpriseNumber: body[:enterprise_number],
+          legalName: body[:legal_name],
+          naturalPerson: ActiveModel::Type::Boolean.new.cast(body[:natural_person]),
+          nacebelCodes: body[:nacebel_codes]
+        }
+      end
 
-        def initialize(error_message, status, body)
-          @status = status
-          @body = body
-          super(error_message)
-        end
+      def formated_response(response)
+        {
+          coverage_ceiling: response['coverageCeiling'],
+          deductible: response['deductible'],
+          covers: {
+            after_delivery: response.dig('grossPremiums', 'afterDelivery'),
+            public_liability: response.dig('grossPremiums', 'publicLiability'),
+            professional_indemnity: response.dig('grossPremiums', 'professionalIndemnity'),
+            entrusted_objects: response.dig('grossPremiums', 'entrustedObjects'),
+            legal_expenses: response.dig('grossPremiums', 'legalExpenses')
+          }
+        }
       end
     end
   end

@@ -17,7 +17,7 @@ RSpec.describe Lead do
   it { is_expected.to define_enum_for(:status).with_values(initial: 0, quoted: 2, contacted: 3, customer: 4, closed: 5) }
   it { is_expected.to define_enum_for(:activity).with_values(medical: 0) }
 
-  it 'validates that all NACEBEL-CODES have 5 characters' do
+  it 'validates that all NACE-BEL codes have 5 characters' do
     lead = build(:lead, nacebel_codes: %w[12345 12345])
     lead2 = build(:lead, nacebel_codes: %w[12345 1234])
 

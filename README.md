@@ -18,6 +18,11 @@
 - `bin/dev` to launch dev server on `localhost:3000`
 - `bundle exec rspec` to run the specs
 
+## Credentials
+- The app uses [Rails credentials](https://edgeguides.rubyonrails.org/security.html#custom-credentials) to store secrets
+- In order to work properly the app needs to read the credentials stored in `config/credentials/developpment.yml.enc`
+- For that please create a `development.key` file under `config/credentials` containing the key sent to you by email
+
 ## App Structure
 ### Models
 #### Lead
@@ -36,7 +41,6 @@
 #### Insurance Api
 - The `InsuranceApi::V1::Client` service is used to call the Insurance Api: `https://staging-gtw.seraphin.be/quotes/`
 - Currently only used to call the `professional-liability` endpoint
-- (Please contact an administrator to get a valid Api key for authentication)
 
 ### Pages
 The current version of the App has 3 pages with the following user journey:

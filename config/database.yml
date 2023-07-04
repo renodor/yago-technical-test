@@ -7,12 +7,14 @@ default: &default
 development:
   <<: *default
   database: rc_pro_quotes_development
-  username: rc_pro_quotes
+  username: postgres
   password: password
 
 test:
   <<: *default
   database: rc_pro_quotes_test
+  username: postgres
+  password: password
 
 production:
   <<: *default

@@ -1,0 +1,17 @@
+.git
+.gitignore
+
+.rspec
+
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+/.bundle
+
+.env
+config/master.key
+
+/storage/*
+!/storage/.keep

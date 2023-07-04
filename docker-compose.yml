@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USERNAME: rc_pro_quotes
+      POSTGRES_PASSWORD: password
+  web:
+    build: .
+    environment:
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rake assets:precompile && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/rc_pro_quotes
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db

@@ -16,11 +16,11 @@
 ## Setup
 Make sure you have [Docker Engine](https://docs.docker.com/engine/install/) installed on your local machine. Then follow this steps to setup the app on your local machine:
 
-1. `git clone git@github.com:renodor/rc_pro_quotes.git && cd rc_pro_quotes`, to clone this repo to your local machine and navigate to the repo directory
-2. `rails_master_key`: `echo 'RAILS_MASTER_KEY={{rails_master_key}}' > .env`, to create an `.env` file with the `RAILS_MASTER_KEY` environment variable. (Replace `{{rails_master_key}}` by the key given to you by email)
-3. `docker compose build && docker compose run web rails db:prepare`, to build Docker images and prepare Rails database. This may take a few minute to download Docker images install dependencies and gems
-4. `docker compose up`, to start Docker containers and access the app on `localhost:3000`
-5. (`docker compose down`, to stop Docker containers)
+1. `git clone git@github.com:renodor/rc_pro_quotes.git && cd rc_pro_quotes`: clone this repo to your local machine and navigate to the repo directory
+2. `echo 'RAILS_MASTER_KEY={{rails_master_key}}' > .env`: create an `.env` file with the `RAILS_MASTER_KEY` environment variable. (Replace `{{rails_master_key}}` by the key given to you by email)
+3. `docker compose build && docker compose run web rails db:prepare`: build Docker images and prepare Rails database. This may take a few minute to download Docker images install dependencies and gems
+4. `docker compose up`: start Docker containers and access the app on `localhost:3000`
+5. (`docker compose down`: stop Docker containers)
 
 <br />
 

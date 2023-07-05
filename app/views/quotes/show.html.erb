@@ -2,22 +2,34 @@
   <h1 class="text-lg font-bold mb-3">Your RC pro quote</h1>
 
   <p>
-    <span class="font-semibold">Annual revenue:</span> <%= number_to_currency(@quote.annual_revenue, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>
+    <span class="font-semibold">Annual revenue:</span>
+    <%= number_to_currency(@quote.annual_revenue, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>
   </p>
-  <p><span class="font-semibold">Enterprise number:</span> <%= @quote.enterprise_number %></p>
-  <p><span class="font-semibold">Legal name:</span> <%= @quote.legal_name %></p>
-  <p><span class="font-semibold">Person type:</span> <%= @quote.person_type.humanize %></p>
+  <p>
+    <span class="font-semibold">Enterprise number:</span>
+    <%= @quote.enterprise_number %></p>
+  <p>
+    <span class="font-semibold">Legal name:</span>
+    <%= @quote.legal_name %></p>
+  <p>
+    <span class="font-semibold">Person type:</span>
+    <%= @quote.person_type.humanize %></p>
   <br />
   <p>
-    <span class="font-semibold">Coverage ceiling:</span> <%= number_to_currency(@quote.coverage_ceiling, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>
+    <span class="font-semibold">Coverage ceiling:</span>
+    <%= number_to_currency(@quote.coverage_ceiling, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>
   </p>
   <p>
-    <span class="font-semibold">Deductible:</span> <%= number_to_currency(@quote.deductible, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>
+    <span class="font-semibold">Deductible:</span>
+    <%= number_to_currency(@quote.deductible, unit: '€', precision: 0, format: '%n %u', delimiter: '.') %>
   </p>
   <p><span class="font-semibold">Covers:</span></p>
   <ul class="list-disc list-inside">
     <% @quote.covers.each do |cover_name, cover_value| %>
-      <li><span class="font-semibold"><%= cover_name %>:</span> <%= number_to_currency(cover_value, unit: '€', format: '%n %u', delimiter: '.', separator: ',') %></li>
+      <li>
+        <span class="font-semibold"><%= cover_name.humanize %>:</span>
+        <%= number_to_currency(cover_value, unit: '€', format: '%n %u', delimiter: '.', separator: ',') %>
+      </li>
     <% end %>
   </ul>
 

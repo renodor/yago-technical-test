@@ -14,13 +14,13 @@
 - [Docker](https://docs.docker.com/) for containerization
 
 ## Setup
-Make sure you have [Docker Engine](https://docs.docker.com/engine/install/) installed on your local machine. Then follow this steps to setup the app on your local machine:
+Make sure you have [Docker Engine](https://docs.docker.com/engine/install/) installed on your local machine, then follow this steps to setup the app:
 
-1. `git clone git@github.com:renodor/rc_pro_quotes.git && cd rc_pro_quotes`: clone this repo to your local machine and navigate to the repo directory
-2. `echo 'RAILS_MASTER_KEY={{rails_master_key}}' > .env`: create an `.env` file with the `RAILS_MASTER_KEY` environment variable. (Replace `{{rails_master_key}}` by the key given to you by email)
-3. `docker compose build && docker compose run web rails db:prepare`: build Docker images and prepare Rails database. This may take a few minute to download Docker images install dependencies and gems
-4. `docker compose up`: start Docker containers and access the app on `localhost:3000`
-5. (`docker compose down`: stop Docker containers)
+1. `git clone git@github.com:renodor/rc_pro_quotes.git && cd rc_pro_quotes` : clone this repo to your local machine and navigate to the repo directory
+2. `echo 'RAILS_MASTER_KEY={{rails_master_key}}' > .env` : create an `.env` file with the `RAILS_MASTER_KEY` environment variable. (Replace `{{rails_master_key}}` by the key given to you by email)
+3. `docker compose build && docker compose run web rails db:prepare` : build Docker images and prepare Rails database. This may take a few minutes to download Docker images, install dependencies and gems
+4. `docker compose up` : start Docker containers and access the app on `localhost:3000`
+5. (`docker compose down` : stop Docker containers)
 
 <br />
 
@@ -32,13 +32,29 @@ You can also run any Rails commands with `docker compose run web {{rails command
 ## Credentials
 - The app uses [Rails credentials](https://edgeguides.rubyonrails.org/security.html#custom-credentials) to store secrets
 - In order to work properly the app needs to read the credentials stored in `config/credentials.yml.enc`
-- For that please make sure that your repo has an `.env` file with the valid `RAILS_MASTER_KEY` variable in it.
+- For that please make sure that your repo has an `.env` file with the valid `RAILS_MASTER_KEY` variable in it. (This should be ok if you followed step 2 of setup process)
+
+## Specs
+- Run Rspec specs with `docker compose run web bundle exec rspec`
 
 ## App Structure
+
+The goals of the RC Pro app are:
+1. to collect commercial leads
+2. to propose RC Pro quotes to users
+
++ the quotes are generated thanks to an Insurance Api.
+
+Design-wise we then decided to have:
+- a `Lead` model, to store leads data
+- a `Quote` model, to store quotes data
+- an `InsuranceApi` service, to consume the Insurance Api
+
+That said, the data repartitions between `Lead` and `Quote` models was not obvious and can be discussed. Please see Limitations & To Do's part for more details.
 ### Models
 #### Lead
-- Stores potential customers contact informations
-- Leads are meant to be re-contacted by the commercial team in order be converted to customers
+- Stores contact informations of potential customers
+- Leads are meant to be re-contacted by the commercial team in order to be converted to customers
 - Every `lead` has at least an `email` a `phone_number` and some `nacebel_codes` (NACE-BEL codes)
 - Every `lead` also has a `status` (`initial`, `quoted`, `contacted`, `customer`, `closed`) in order to follow along its commercial journey
 - `lead` can have some associated quotes
@@ -53,13 +69,62 @@ You can also run any Rails commands with `docker compose run web {{rails command
 - The `InsuranceApi::V1::Client` service is used to call the Insurance Api: `https://staging-gtw.seraphin.be/quotes/`
 - Currently only used to call the `professional-liability` endpoint
 
-### Pages
+### User journey
 The current version of the App has 3 pages with the following user journey:
 1. Home page: A form to get lead contact informations. With a CTA to go to quote form.
 2. Quote form: A form to get quote information, and advice user on the best options regarding his/her profile. With a CTA to create quote.
 3. Quote page: displays newly created RC quote.
 
+
+## Limitations & To Do's
+### Design decisions
+As explained in the App structure part before, current version of the app has two models: `Lead` and `Quote`, and one `InsuranceApi` service to call the Insurance Api. At first, the idea was simple:
+- Attributes related to the user profile and that don't have an influence on the quote should go into the `Lead` model (things like `email`, `phone_number`, `first_name`, `last_name`, `address` etc..)
+- Attributes that have an influence on the quote, that are part of the quote itself or needed to call the Insurance Api should go into the `Quote` model (things like `annual_revenue`, `coverage_ceiling`, `deductible` etc...)
+
+But then the distinction appeared not so obvious:
+- `enterprise_number` and `legal_name` are more related to the user profile, and shouldn't influence the quote in any way, but are needed to call the Insurance Api and generate a quote...
+- `nacebel_codes` (NACE-BEL codes) and `person_type` (natural person or not), can influence the quote but can also be considered as "user profile" attributes...
+
+Overall the decision taken was to stay as close as possible to the Insurance Api: all attributes needed to consume the Api will go in the `Quote` model. Considering that this model stores quote data generated by this Api. \
+This also helps to reduce the size of the lead creation form (The app home page), which makes it more digest and helps to generate more leads. Which is the underlying main goal of the app. \
+The only exception is the `nacebel_codes` attribute: it belongs to `Lead` model, whereas it is needed to consume the Insurance Api. This is because we need those NACE-BEL codes to define the user `activity` to then generate advises on the quote form (what deductible formula, coverage ceiling formula and covers is best for his/her profile). So it was way easier to collect this information before reaching the quote form page.
+
+Also even if we want to stay close to the Insurance Api, the `Quote` model still reflects a quote created for a specific lead and does not store necesarly the all attributes needed to call Api, and can contains only part of the payload generated by this Api. For example:
+- `coverage_ceiling_formula` and `deductible_formula` are collected on the quote form page, but are not stored in the `Quote` model. Those attributes are used to call the Api but then only the real `coverage_ceiling` and `deductible` values are stored in the `Quote` model
+- only the `covers` requested by user are stored in the record
+
+All these reflections and design decisions lead to some unusual `params` manipulation in the  `QuotesController` in order to call the Insurance Api with the correct body and to create the `Quote` record with the correct attributes:
+- We need to get `nacebel_codes` from the `Lead` record
+- We need to get `coverage_ceiling_formula` and `deductible_formula` from the form params, but don't store it in the `quote` record
+- We need to remove from the `InsuranceApi` payload the `covers` not choosen by the user
+
+### Scalability
+Because this is still a simple app with limited information, we decided to store some data directly as constant, enums or attributes. Going further this data could be extracted in it's own model. For example:
+- `Lead::MEDICAL_NACEBEL_CODES`, `Lead.activities` enum, and `Lead::PROFESSION_BY_NACEBEL_CODE`: are used to set the lead record `activity` and to display the professions on the lead form. This will be hard to maintain and scall with hundreds of activities and NACE-BEL codes. We could imagine a new `Activity` model with a many to many relation with the `Lead` model, each `activity` record having many `nacebel_codes` as an array attributes or even it's own `NacebelCode` model etc...
+- `covers` is a `jsonb` attribute in the `Quote` model. It could be extracted in its own `Cover` model, with a one to many relation: "One quote can have many covers"
+- The cover advice logic is also computed thanks to `Quote::COVERS_BY_ACTIVITY`, `Quote::DEDUCTIBLE_FORMULA_BY_ACTIVITY`, `Quote::COVERAGE_CEILING_FORMULA_BY_ACTIVITY`. This is not scalable with hundreds of activities and more complexe advice logic, and could be extracted in it's own model or service
+
 ### Specs
-- Run Rspec specs with `docker compose run web bundle exec rspec`
 We currently only have model specs (to test `Lead` and `Quote` models), and service spec (to test `InsuranceApi::V1::Client`). Going further we would need to create integration specs to test the user journey into the different pages.
+
+### I18n
+The app is not i18n ready, all texts (views, validation errors, forms attributes etc...) being hard coded.
+
+### Error handling
+The Api errors and exception handling is basic and would need to be more robust in a real production-ready app. For example:
+- If the `InsuranceApi::V1::Client` service raises an error we just advice the user to try again. We should first log this exception somewhere, react to it, maybe having a retry mechanism.
+- If the `InsuranceApi::V1::Client` is not successful we don't analyse and react to the error data returned. We just rely on our `Quote` model ActiveRecord validation errors, "hoping" it will reflect the Api errors...
+
+We could also use a tool like [Sentry](https://sentry.io/) for error monitoring.
+
+### Optimization
+In the `QuotesController#create` method, we call the `InsuranceApi` service before validating that `quote_params` are correct. We could prevent unecessary Api calls by having a more complexe logic to first validate some params, and then call the Api
+
+### Authorization
+There are currently no authorization process in the app. Anyone can access the quote page of any lead, or even the quote form to crreate a quote for any lead.
+
+### Front end
+The front end design of the app is really basic and obviously need to be improved.
+
 

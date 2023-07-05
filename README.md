@@ -5,23 +5,35 @@
 - Rails 7.0.4
 - PostgreSQL
 
-## Other dependencies
+<br />
+
 - [Tailwindcss](https://tailwindcss.com/) for CSS
 - [Rspec](https://rspec.info/) for testing
 - [Simple Form](https://github.com/heartcombo/simple_form) for HTML forms
 - [Faraday](https://github.com/lostisland/faraday) for HTTP client
+- [Docker](https://docs.docker.com/) for containerization
 
 ## Setup
-- `bundle install` to install dependencies
-- `rails db:create` to create the Databse
-- `rails db:migrate` to run migrations
-- `bin/dev` to launch dev server on `localhost:3000`
+Make sure you have [Docker Engine](https://docs.docker.com/engine/install/) installed on your local machine.
+
+1. Clone this repo to your local machine and navigate to the repo directory: `git clone git@github.com:renodor/rc_pro_quotes.git && cd rc_pro_quotes`
+2. Create an `.env` file with the `rails_master_key`: `echo 'RAILS_MASTER_KEY={{rails_master_key}}' > .env` (Replace `{{rails_master_key}}` by the key given to you by email)
+3. Build Docker images and prepare Rails database: `docker compose build && docker compose run web rails db:prepare` (This may take a few minute to download Docker images install dependencies and gems)
+4. Start Docker containers: `docker compose up` to access the app on `localhost:3000`
 - `bundle exec rspec` to run the specs
+5. (Stop Docker containers: `docker compose down`)
+
+<br />
+
+You can also run any Rails commands with `docker compose run web {{rails command}}`. Ex:
+- `docker compose run web rails c`
+- `docker compose run web rails db:reset`
+- etc...
 
 ## Credentials
 - The app uses [Rails credentials](https://edgeguides.rubyonrails.org/security.html#custom-credentials) to store secrets
-- In order to work properly the app needs to read the credentials stored in `config/credentials/developpment.yml.enc`
-- For that please create a `development.key` file under `config/credentials` containing the key sent to you by email
+- In order to work properly the app needs to read the credentials stored in `config/credentials.yml.enc`
+- For that please make sure that your repo has an `.env` file with the valid `RAILS_MASTER_KEY` variable in it.
 
 ## App Structure
 ### Models
@@ -48,6 +60,7 @@ The current version of the App has 3 pages with the following user journey:
 2. Quote form: A form to get quote information, and advice user on the best options regarding his/her profile. With a CTA to create quote.
 3. Quote page: displays newly created RC quote.
 
-### About Specs
+### Specs
+- Run Rspec specs with `docker compose run web bundle exec rspec`
 We currently only have model specs (to test `Lead` and `Quote` models), and service spec (to test `InsuranceApi::V1::Client`). Going further we would need to create integration specs to test the user journey into the different pages.
 

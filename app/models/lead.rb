@@ -15,10 +15,10 @@ class Lead < ApplicationRecord
   # in order to know exactly when a lead evolved from one status to another.
   enum status: {
     initial: 0,
-    quoted: 2,
-    contacted: 3,
-    customer: 4,
-    closed: 5
+    quoted: 1,
+    contacted: 2,
+    customer: 3,
+    closed: 4
   }
 
   enum activity: {

@@ -14,7 +14,7 @@ RSpec.describe Lead do
   it { is_expected.not_to allow_value('test@test').for(:email) }
   it { is_expected.not_to allow_value('test.com').for(:email) }
 
-  it { is_expected.to define_enum_for(:status).with_values(initial: 0, quoted: 2, contacted: 3, customer: 4, closed: 5) }
+  it { is_expected.to define_enum_for(:status).with_values(initial: 0, quoted: 1, contacted: 2, customer: 3, closed: 4) }
   it { is_expected.to define_enum_for(:activity).with_values(medical: 0) }
 
   it 'validates that all NACE-BEL codes have 5 characters' do

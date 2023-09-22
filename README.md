@@ -1,4 +1,4 @@
-# RC Pro Quotes
+# RC Pro Quotes - Technical test for Yago
 
 ## Built with:
 - Ruby 3.2.2
